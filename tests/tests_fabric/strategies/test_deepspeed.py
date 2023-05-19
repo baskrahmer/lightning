@@ -294,8 +294,8 @@ def test_deepspeed_load_checkpoint_state_updated_with_client_state(tmp_path):
 
 
 @RunIf(deepspeed=True)
-@pytest.mark.parametrize("optimzer_state_requested", [True, False])
-def test_deepspeed_load_checkpoint_optimzer_state_requested(optimzer_state_requested, tmp_path):
+@pytest.mark.parametrize("optimizer_state_requested", [True, False])
+def test_deepspeed_load_checkpoint_optimzer_state_requested(optimizer_state_requested, tmp_path):
     """Test that the DeepSpeed strategy loads the optimizer state only when requested."""
     from deepspeed import DeepSpeedEngine
 
@@ -308,14 +308,14 @@ def test_deepspeed_load_checkpoint_optimzer_state_requested(optimzer_state_reque
     model.load_checkpoint.return_value = [None, {}]
 
     state = {"model": model}
-    if optimzer_state_requested:
+    if optimizer_state_requested:
         state["optimizer"] = optimizer
 
     strategy.load_checkpoint(path=tmp_path, state=state)
     model.load_checkpoint.assert_called_with(
         tmp_path,
         tag="checkpoint",
-        load_optimizer_states=optimzer_state_requested,
+        load_optimizer_states=optimizer_state_requested,
         load_lr_scheduler_states=False,
         load_module_strict=True,
     )
